@@ -16,32 +16,42 @@
         font-family: Arial, Helvetica, sans-serif;
       }
       .image-container {
-        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
         width: 100%;
-        height: auto;
+        height: 100%;
+        background-color: transparent;
       }
-      .image-container img {
+      .image-wrapper {
+        position: relative;
+        width: auto;
+        height: 90vh;
+        max-width: 100%;
+      }
+      .image-wrapper img {
         display: block;
         width: 100%;
-        max-height: 90vh;
+        height: 100%;
         object-fit: contain;
       }
       .clickable-overlay {
         position: absolute;
         top: 0;
         left: 0;
-        pointer-events: none;
+        width: 100%;
+        height: 100%;
       }
       .clickable {
         position: absolute;
         cursor: pointer;
         /* background: rgba(255, 255, 255, 0.5); */
-        /* border: 2px solid #ffffff; */
         pointer-events: auto;
-        transition: background 0.3s ease;
+        /* transition: background 0.3s ease; */
       }
       .clickable:hover {
-        background: rgba(255, 255, 255, 0.8);
+        /* background: rgba(255, 255, 255, 0.8); */
       }
       .modal {
         display: none;
@@ -54,23 +64,41 @@
         justify-content: center;
         align-items: center;
         z-index: 10;
+        cursor: pointer;
       }
       .modal-content {
         background: white;
         padding: 2rem;
         border-radius: 8px;
         text-align: center;
-        max-width: 90%;
         overflow: auto;
+        cursor: default;
+        display: flex;
+        max-width: 425px;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      .modal-content h2 {
+        margin: 0 0 1rem 0;
+      }
+      .modal-content p {
+        margin: 0;
+      }
+      .modal-content img,
+      .modal-content video {
+        max-width: 100%;
+        height: auto;
+        margin: 1rem 0;
       }
       .modal-close {
-        cursor: pointer;
         margin-top: 1rem;
-        background: red;
+        background: #63110b;
         color: white;
         padding: 0.5rem 1rem;
         border: none;
         border-radius: 4px;
+        cursor: pointer;
       }
       iframe {
         width: 100%;
@@ -82,16 +110,82 @@
         height: auto;
         border-radius: 8px;
       }
+      a {
+        color: #417f87;
+        text-decoration: underline;
+      }
+      @media screen and (max-width: 768px) {
+        .image-wrapper {
+          width: 100%;
+          height: auto;
+          aspect-ratio: 3/4;
+        }
+      }
+      .header {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        z-index: 5;
+      }
+      .logo {
+        width: 200px;
+        height: auto;
+      }
+      .zoom-hint {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 8px 16px;
+        border-radius: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .zoom-hint svg {
+        width: 20px;
+        height: 20px;
+      }
+      @media screen and (max-width: 768px) {
+        .logo {
+          width: 90%;
+          max-width: 300px;
+        }
+      }
     </style>
   </head>
   <body>
-    <div class="image-container">
+    <div id="welcome-modal" class="modal">
+      <div class="modal-content">
+        <h2>Bienvenue</h2>
+        <p>Cliquez sur les fenêtres pour découvrir nos vœux</p>
+        <button class="modal-close" onclick="closeModal('welcome-modal')">
+          Commencer
+        </button>
+      </div>
+    </div>
+
+    <div class="header">
       <img
-        id="background-image"
-        src="Visuel%20maison%20-%20Carte%20de%20voeux%202025%20-%20Hector%20Advisory.svg"
-        alt="Maison"
+        src="./assets/images/logo_hector-advisory.png"
+        alt="Hector Advisory"
+        class="logo"
       />
-      <div class="clickable-overlay" id="clickable-overlay"></div>
+    </div>
+
+    <div class="image-container">
+      <div class="image-wrapper">
+        <img
+          id="background-image"
+          src="./assets/visuel-maison.svg"
+          alt="Maison"
+        />
+        <div class="clickable-overlay" id="clickable-overlay"></div>
+      </div>
     </div>
 
     <!-- Conteneur pour les modaux -->
@@ -100,39 +194,157 @@
     <script>
       // Tableau des zones cliquables avec contenu enrichi
       const clickableAreas = [
+        // Étages et fenêtres
+        // Étage 3
         {
-          x: 41.5,
+          x: 30,
           y: 8.2,
-          width: 4.7,
+          width: 10.4,
           height: 11,
           modalId: "modal1",
-          title: "Fenêtre 1",
+          title: "Vidéos client",
           content: `
-            <p>Que cette année 2025 soit placée sous le signe de l'inspiration ! 
-            Laissez-vous embarquer dans des 
-            <a href="https://www.hector-advisory.com/temoignages-clients/" target="_blank" style="color: blue; text-decoration: underline;">témoignages captivants</a> !</p>
-          `,
+      <p>Que cette année 2025 soit placée sous le signe de l'inspiration ! 
+      Laissez-vous embarquer dans des <a href="https://www.hector-advisory.com/temoignages-clients/" target="_blank">témoignages captivants</a> !</p>
+    `,
           type: "text",
         },
         {
-          x: 54.2,
+          x: 61,
           y: 8.2,
-          width: 4.7,
+          width: 10.4,
           height: 11,
           modalId: "modal2",
-          title: "Fenêtre 2",
-          src: "https://via.placeholder.com/400x300",
+          title: "Sciences sociales",
+          content: `
+      <p>Que 2025 soit l'année où la communication devient un levier puissant pour renforcer les liens. 
+      Découvrez comment les sciences sociales peuvent impulser le changement au sein de vos organisations, <a href="https://www.hector-advisory.com/limpact-des-sciences-sociales-sur-la-communication-organisationnelle-clara-lamache/" target="_blank">juste ici</a> !</p>
+    `,
+          type: "text",
+        },
+
+        // Étage 2
+        {
+          x: 12.5,
+          y: 26.8,
+          width: 13,
+          height: 19.2,
+          modalId: "modal3",
+          title: "Présentation",
+          content: `
+      <p>En 2025, boostez vos projets avec Hector ! 
+      Avec des outils comme la <a href="https://www.hector-advisory.com/tips-hector-modelisation-systemique/" target="_blank">modélisation systémique</a>, apprenez à naviguer dans la complexité et à transformer vos idées.</p>
+    `,
+          type: "text",
+        },
+        {
+          x: 43,
+          y: 26.8,
+          width: 13,
+          height: 19.2,
+          modalId: "modal4",
+          title: "10 ans Hector",
+          content: `
+      <video controls style="max-width: 100%; border-radius: 8px;">
+        <source src="./assets/videos/hector-advisory.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la lecture de vidéos.
+      </video>
+    `,
+          src: "./assets/videos/hector-advisory.mp4",
+          type: "video",
+        },
+        {
+          x: 74.5,
+          y: 26.8,
+          width: 13,
+          height: 19.2,
+          modalId: "modal5",
+          title: "Communication",
+          content: `
+      <p>Que cette année soit le tremplin pour propulser vos projets, et qu'ils prennent leur envol grâce à vos « oiseaux rares ». 
+      Pour en savoir plus sur la mise en pratique de cette méthode, <a href="https://www.hector-advisory.com/les-oiseaux-rares-tips-hector/" target="_blank">lisez notre article</a>.</p>
+    `,
+          type: "text",
+        },
+
+        // Étage 1
+        {
+          x: 12.5,
+          y: 53.5,
+          width: 13,
+          height: 15,
+          modalId: "modal6",
+          title: "Personne qui travaille",
+          content: `
+      <p>Chez Hector, la curiosité n'est pas un défaut, mais une force. 
+      Découvrez comment elle inspire innovation et transformation dans <a href="https://www.hector-advisory.com/un-vilain-defaut-au-service-de-lentreprise-petite-ethique-de-la-curiosite/" target="_blank">notre article</a> !</p>
+    `,
+          type: "text",
+        },
+        {
+          x: 43.5,
+          y: 53.5,
+          width: 13,
+          height: 15,
+          modalId: "modal7",
+          title: "Podcast Entreprise Curieuse",
+          content: `
+      <p>Nous vous souhaitons une année pleine de curiosité et d'inspiration ! 
+      Pour cela, vous pourrez toujours compter sur le podcast <a href="https://linktr.ee/podcastentreprisecurieuse?utm_source=linktree_admin_share&fbclid=PAZXh0bgNhZW0CMTEAAab0k8IqVYavC69vONyICwdizUQhvJbHP7F_IkBzBCpTsaUDJSKZgQ0Bctw_aem_dAIxF4WcenawNuejVUfxkg" target="_blank">Entreprise Curieuse</a> !</p>
+    `,
+          type: "text",
+        },
+        {
+          x: 74.5,
+          y: 53.5,
+          width: 13,
+          height: 15,
+          modalId: "modal8",
+          title: "Ecovadis",
+          content: `
+      <p>Avec la médaille Platinum d'EcoVadis, nous entrons en 2025 avec la détermination de continuer à transformer vos missions en actions concrètes plus responsables. 
+      Que 2025 soit une année placée sous le signe de la durabilité et de l'engagement !</p>
+    `,
+          type: "text",
+        },
+
+        // Étage 0
+        {
+          x: 12.5,
+          y: 75.5,
+          width: 13,
+          height: 14.5,
+          modalId: "modal9",
+          title: "Human Augmented Consulting",
+          content: `
+      <p>Avec le Human Augmented Consulting, nous continuons à transformer les projets en aventures humaines porteuses de sens. 
+      Pour cette année, qu'un grand H vous inspire à accomplir chaque projet.</p>
+    `,
+          type: "text",
+        },
+        {
+          x: 37.75,
+          y: 71,
+          width: 25,
+          height: 29.5,
+          modalId: "modal10",
+          title: "Porte - Selfie d'équipe",
+          content: `
+      <img src="./assets/images/selfie-d'equipe.png" alt="Selfie d'équipe" />
+    `,
+          src: "./assets/images/selfie-d'equipe.png",
           type: "image",
         },
         {
-          x: 34.5,
-          y: 26.8,
-          width: 5.4,
-          height: 19.2,
-          modalId: "modal3",
-          title: "Fenêtre 3",
-          src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-          type: "video",
+          x: 75,
+          y: 75.5,
+          width: 13,
+          height: 14.5,
+          modalId: "modal11",
+          title: "Week-end Hector",
+          content: `<img src="./assets/images/week-end_hector.png" alt="Week-end Hector" />`,
+          src: "./assets/images/week-end_hector.png",
+          type: "image",
         },
       ];
 
@@ -147,12 +359,22 @@
           modal.id = area.modalId;
           modal.classList.add("modal");
 
+          // Ajout de l'événement click sur le fond noir
+          modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+              closeModal(area.modalId);
+            }
+          });
+
           let modalContent = `<h2>${area.title}</h2>`;
-          if (area.type === "text") modalContent += area.content;
-          else if (area.type === "image")
+          if (area.type === "text") {
+            modalContent += area.content;
+          } else if (area.type === "image") {
             modalContent += `<img src="${area.src}" alt="${area.title}"/>`;
-          else if (area.type === "video")
-            modalContent += `<iframe src="${area.src}" allowfullscreen></iframe>`;
+          } else if (area.type === "video") {
+            console.log("Chargement de la vidéo:", area.src);
+            modalContent += area.content;
+          }
 
           modal.innerHTML = `
             <div class="modal-content">
@@ -202,6 +424,8 @@
       window.addEventListener("load", () => {
         generateModals();
         positionClickableAreas();
+        // Ouvrir le modal de bienvenue au chargement
+        openModal("welcome-modal");
       });
 
       const resizeObserver = new ResizeObserver(positionClickableAreas);
