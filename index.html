@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carte de Vœux 2025 - SVG Responsive</title>
+    <title>Carte de Vœux 2025</title>
     <style>
       body {
         margin: 0;
@@ -13,6 +13,7 @@
         align-items: center;
         height: 100vh;
         background-color: #f0f0f0;
+        font-family: Arial, Helvetica, sans-serif;
       }
       .image-container {
         position: relative;
@@ -22,8 +23,7 @@
       .image-container img {
         display: block;
         width: 100%;
-        max-height: 90vh; /* L'image reste contenue dans la hauteur de l'écran */
-        height: auto;
+        max-height: 90vh;
         object-fit: contain;
       }
       .clickable-overlay {
@@ -35,10 +35,10 @@
       .clickable {
         position: absolute;
         cursor: pointer;
-        background: rgba(255, 255, 255, 0.5);
-        border: 2px solid #ffffff;
-        transition: background 0.3s ease;
+        /* background: rgba(255, 255, 255, 0.5); */
+        /* border: 2px solid #ffffff; */
         pointer-events: auto;
+        transition: background 0.3s ease;
       }
       .clickable:hover {
         background: rgba(255, 255, 255, 0.8);
@@ -60,14 +60,27 @@
         padding: 2rem;
         border-radius: 8px;
         text-align: center;
+        max-width: 90%;
+        overflow: auto;
       }
       .modal-close {
         cursor: pointer;
+        margin-top: 1rem;
         background: red;
         color: white;
-        border: none;
         padding: 0.5rem 1rem;
+        border: none;
         border-radius: 4px;
+      }
+      iframe {
+        width: 100%;
+        height: 300px;
+        border-radius: 8px;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
       }
     </style>
   </head>
@@ -81,11 +94,11 @@
       <div class="clickable-overlay" id="clickable-overlay"></div>
     </div>
 
-    <!-- Ici les modaux seront générés dynamiquement -->
+    <!-- Conteneur pour les modaux -->
     <div id="modals-container"></div>
 
     <script>
-      // Tableau des zones cliquables
+      // Tableau des zones cliquables avec contenu enrichi
       const clickableAreas = [
         {
           x: 41.5,
@@ -94,7 +107,12 @@
           height: 11,
           modalId: "modal1",
           title: "Fenêtre 1",
-          content: "Contenu de la fenêtre 1.",
+          content: `
+            <p>Que cette année 2025 soit placée sous le signe de l'inspiration ! 
+            Laissez-vous embarquer dans des 
+            <a href="https://www.hector-advisory.com/temoignages-clients/" target="_blank" style="color: blue; text-decoration: underline;">témoignages captivants</a> !</p>
+          `,
+          type: "text",
         },
         {
           x: 54.2,
@@ -103,7 +121,8 @@
           height: 11,
           modalId: "modal2",
           title: "Fenêtre 2",
-          content: "Contenu de la fenêtre 2.",
+          src: "https://via.placeholder.com/400x300",
+          type: "image",
         },
         {
           x: 34.5,
@@ -112,80 +131,8 @@
           height: 19.2,
           modalId: "modal3",
           title: "Fenêtre 3",
-          content: "Contenu de la fenêtre 3.",
-        },
-        {
-          x: 47.3,
-          y: 26.8,
-          width: 5.4,
-          height: 19.2,
-          modalId: "modal4",
-          title: "Fenêtre 4",
-          content: "Contenu de la fenêtre 4.",
-        },
-        {
-          x: 59.85,
-          y: 26.8,
-          width: 5.4,
-          height: 19.2,
-          modalId: "modal5",
-          title: "Fenêtre 5",
-          content: "Contenu de la fenêtre 5.",
-        },
-        {
-          x: 34.5,
-          y: 53.5,
-          width: 5.4,
-          height: 15,
-          modalId: "modal6",
-          title: "Fenêtre 6",
-          content: "Contenu de la fenêtre 6.",
-        },
-        {
-          x: 47.3,
-          y: 53.5,
-          width: 5.4,
-          height: 15,
-          modalId: "modal7",
-          title: "Fenêtre 7",
-          content: "Contenu de la fenêtre 7.",
-        },
-        {
-          x: 59.85,
-          y: 53.5,
-          width: 5.4,
-          height: 15,
-          modalId: "modal8",
-          title: "Fenêtre 8",
-          content: "Contenu de la fenêtre 8.",
-        },
-        {
-          x: 34.5,
-          y: 75.5,
-          width: 5.4,
-          height: 14.5,
-          modalId: "modal9",
-          title: "Fenêtre 9",
-          content:
-            "Avec le Human Augmented Consulting, nous continuons à transformer les projets en aventures humaines porteuses de sens. Pour cette année, qu’un grand H vous inspire à accomplir chaque projet.",
-        },
-        {
-          x: 44.75,
-          y: 71,
-          width: 10.5,
-          height: 29.5,
-          modalId: "modal10",
-          title: "Fenêtre 10",
-          content: "Contenu de la fenêtre 10.",
-        },
-        {
-          x: 60,
-          y: 75.5,
-          width: 5.4,
-          height: 14.5,
-          modalId: "modal11",
-          title: "Fenêtre 11",
-          content: "Contenu de la fenêtre 11.",
+          src: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          type: "video",
         },
       ];
 
@@ -199,10 +146,17 @@
           const modal = document.createElement("div");
           modal.id = area.modalId;
           modal.classList.add("modal");
+
+          let modalContent = `<h2>${area.title}</h2>`;
+          if (area.type === "text") modalContent += area.content;
+          else if (area.type === "image")
+            modalContent += `<img src="${area.src}" alt="${area.title}"/>`;
+          else if (area.type === "video")
+            modalContent += `<iframe src="${area.src}" allowfullscreen></iframe>`;
+
           modal.innerHTML = `
             <div class="modal-content">
-              <h2>${area.title}</h2>
-              <p>${area.content}</p>
+              ${modalContent}
               <button class="modal-close" onclick="closeModal('${area.modalId}')">Fermer</button>
             </div>
           `;
