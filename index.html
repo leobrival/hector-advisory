@@ -42,7 +42,6 @@
         left: 0;
         width: 100%;
         height: 100%;
-        display: none;
       }
       .clickable {
         position: absolute;
@@ -414,20 +413,18 @@
       // Fonction pour ouvrir un modal
       function openModal(id) {
         document.getElementById(id).style.display = "flex";
-        document.getElementById("clickable-overlay").style.display = "block";
       }
 
       // Fonction pour fermer un modal
       function closeModal(id) {
         document.getElementById(id).style.display = "none";
-        document.getElementById("clickable-overlay").style.display = "none";
       }
 
       // Initialisation
       window.addEventListener("load", () => {
         generateModals();
         positionClickableAreas();
-        document.getElementById("clickable-overlay").style.display = "none";
+        // Ouvrir le modal de bienvenue au chargement
         openModal("welcome-modal");
       });
 
